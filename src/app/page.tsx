@@ -1,10 +1,17 @@
 import { FC } from 'react'
+import TodoItem from "@/components/todo-item.tsx"
 import New from "./new/page.tsx"
 import Link from "next/link"
+import { prisma } from "@/db"
 
-interface HomePage {}
+const getTodos = () => {
+  return prisma.todo.findMany()
+}
 
-const Home: FC<HomePage> = () => {
+const Home = async () => {
+  const todos = await getTodos()
+  // await prisma.todo.create({ data: { title: "test", complete: false }})
+
   return (
     <>
       <header className="flex justify-between items-center mb-6">
@@ -12,6 +19,9 @@ const Home: FC<HomePage> = () => {
         <Link href="/new" className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none">New</Link>
       </header>
       <ul>
+        {todos.map(todo => (
+          <TodoItem key={todo.id} {...todo} />
+        ))}
       </ul>
     </>
   )
